@@ -1,0 +1,3 @@
+Suffix automata support arbitrary substring search in a text corpus.
+A dictionary and data structure are common computer science topics.
+Unicode enables text processing for English and Tamil.
