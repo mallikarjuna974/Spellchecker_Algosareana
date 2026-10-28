@@ -18,9 +18,9 @@ def main():
   except Exception as e: print("Download failed:",e,file=sys.stderr);return 1
   words=[];seen=set()
   for line in raw.splitlines():
-   cols=line.strip().split()
-   if not cols:continue
-   w=cols[0]
+   line=line.strip()
+   if not line or line.startswith("#") or "word=" not in line:continue
+   w=line.split("word=",1)[1].split(",f=",1)[0].strip()
    if valid(w,lo,hi) and w not in seen:seen.add(w);words.append(w)
    if len(words)==10000:break
   if len(words)!=10000:print(f"Expected 10,000 unique {label} words; found {len(words)}. Refusing to pad with fake words.",file=sys.stderr);return 1
