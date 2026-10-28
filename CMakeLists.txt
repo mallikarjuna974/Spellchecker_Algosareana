@@ -3,27 +3,19 @@ project(SubstringAutocorrect LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
-execute_process(
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/generate_dictionary.py
-            ${CMAKE_SOURCE_DIR}/data/dictionary.txt
-    RESULT_VARIABLE DICTIONARY_GENERATION_RESULT
-)
+execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/generate_dictionary.py ${CMAKE_SOURCE_DIR}/data/dictionary.txt RESULT_VARIABLE DICTIONARY_GENERATION_RESULT)
 if(NOT DICTIONARY_GENERATION_RESULT EQUAL 0)
-    message(FATAL_ERROR "Failed to generate data/dictionary.txt")
+ message(FATAL_ERROR "Failed to generate data/dictionary.txt")
 endif()
-
-add_executable(autocorrect
-    src/main.cpp
-    src/Dictionary.cpp
-    src/TrieGraph.cpp
-    src/Ranker.cpp
-    src/Autocorrect.cpp
-)
+add_executable(autocorrect src/main.cpp src/Dictionary.cpp src/TrieGraph.cpp src/Ranker.cpp src/Autocorrect.cpp)
 target_include_directories(autocorrect PRIVATE include)
-if (MSVC)
-    target_compile_options(autocorrect PRIVATE /W4)
+add_executable(multilingual_autocorrect src/multilingual_main.cpp src/Unicode.cpp src/MultiDictionary.cpp)
+target_include_directories(multilingual_autocorrect PRIVATE include)
+if(MSVC)
+ target_compile_options(autocorrect PRIVATE /W4)
+ target_compile_options(multilingual_autocorrect PRIVATE /W4)
 else()
-    target_compile_options(autocorrect PRIVATE -Wall -Wextra -Wpedantic)
+ target_compile_options(autocorrect PRIVATE -Wall -Wextra -Wpedantic)
+ target_compile_options(multilingual_autocorrect PRIVATE -Wall -Wextra -Wpedantic)
 endif()
