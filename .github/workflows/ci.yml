@@ -1,7 +1,7 @@
 name: Build and multilingual smoke tests
 on:
   push:
-    branches: [main, "feature/**"]
+    branches: [main, "feature/**", "multilingual-autocorrect"]
   pull_request:
   workflow_dispatch:
 jobs:
