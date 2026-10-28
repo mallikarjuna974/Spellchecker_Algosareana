@@ -10,6 +10,7 @@ int main(){
  assert(spell::decodeUtf8("అ").size()==1);
  assert(spell::editDistanceUnicode("అ","ఆ")==1);
  assert(spell::editDistanceUnicode("கல்","கள்")==1);
+ assert(spell::editDistanceUnicode("அஆ","ஆஅ")==1); // adjacent transposition
  assert(spell::isSupportedScript(te,"te"));
  assert(spell::isSupportedScript(ta,"ta"));
  assert(spell::isSupportedScript(hi,"hi"));
