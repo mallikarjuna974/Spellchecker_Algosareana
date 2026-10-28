@@ -1,34 +1,48 @@
-name: Build and smoke test
-
+name: Build and multilingual smoke tests
 on:
   push:
-    branches: [main]
+    branches: [main, "feature/**"]
   pull_request:
   workflow_dispatch:
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up CMake and compiler
+      - name: Install toolchain
         run: |
           cmake --version
           g++ --version
           python3 --version
-      - name: Validate dictionary generator
+      - name: Validate English dictionary generator
         run: |
-          python3 -m py_compile scripts/generate_dictionary.py
+          python3 -m py_compile scripts/generate_dictionary.py scripts/fetch_dictionaries.py
           python3 scripts/generate_dictionary.py data/dictionary.txt
           python3 - <<'PY'
           from pathlib import Path
           words = Path("data/dictionary.txt").read_text().splitlines()
-          assert len(words) == 10000, len(words)
-          assert len(set(words)) == 10000
+          assert len(words) == 10000 and len(set(words)) == 10000
           assert all(w.isascii() and w.isalpha() and w.islower() for w in words)
-          print(f"Validated {len(words)} unique lowercase alphabetic words")
+          print("English vocabulary validated:", len(words))
           PY
       - name: Configure and build
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --parallel 2
-      - name: Run smoke tests
+      - name: Run C++ tests
+        run: ctest --test-dir build --output-on-failure
+      - name: Run English smoke test
         run: bash tests/smoke_test.sh
+      - name: Fetch and validate three Indic dictionaries
+        run: |
+          python3 scripts/fetch_dictionaries.py
+          python3 - <<'PY'
+          from pathlib import Path
+          for code in ("te", "ta", "hi"):
+              words = (Path("data") / f"{code}.txt").read_text(encoding="utf-8").splitlines()
+              assert len(words) == 10000 and len(set(words)) == 10000, (code, len(words))
+              print(code, len(words), "unique words")
+          PY
+      - name: Run language selection smoke test
+        run: |
+          printf '1\n:quit\n' | ./build/multilingual_autocorrect | grep -q 'Telugu'
+          printf '2\n:quit\n' | ./build/multilingual_autocorrect | grep -q 'Tamil'
+          printf '3\n:quit\n' | ./build/multilingual_autocorrect | grep -q 'Hindi'
