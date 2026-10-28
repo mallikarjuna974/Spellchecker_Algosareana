@@ -1,0 +1,34 @@
+name: Build and smoke test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up CMake and compiler
+        run: |
+          cmake --version
+          g++ --version
+          python3 --version
+      - name: Validate dictionary generator
+        run: |
+          python3 -m py_compile scripts/generate_dictionary.py
+          python3 scripts/generate_dictionary.py data/dictionary.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          words = Path("data/dictionary.txt").read_text().splitlines()
+          assert len(words) == 10000, len(words)
+          assert len(set(words)) == 10000
+          assert all(w.isascii() and w.isalpha() and w.islower() for w in words)
+          print(f"Validated {len(words)} unique lowercase alphabetic words")
+          PY
+      - name: Configure and build
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --parallel 2
+      - name: Run smoke tests
+        run: bash tests/smoke_test.sh
