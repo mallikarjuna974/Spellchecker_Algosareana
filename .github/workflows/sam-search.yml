@@ -1,0 +1,23 @@
+name: SAM multilingual search build and tests
+on:
+  push:
+    branches: ["feature/sam-multilingual-search"]
+    paths:
+      - "sam-search-engine/**"
+      - ".github/workflows/sam-search.yml"
+  pull_request:
+    paths:
+      - "sam-search-engine/**"
+      - ".github/workflows/sam-search.yml"
+  workflow_dispatch:
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S sam-search-engine -B sam-search-engine/build -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build sam-search-engine/build --parallel 2
+      - name: Test
+        run: ctest --test-dir sam-search-engine/build --output-on-failure
