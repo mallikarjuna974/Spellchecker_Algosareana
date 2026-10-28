@@ -1,0 +1,8 @@
+# One UTF-8 keyword or phrase per line; matched documents receive a relevance boost.
+algorithm
+computer science
+data structure
+suffix automaton
+தமிழ்
+கணினி
+அறிவியல்
