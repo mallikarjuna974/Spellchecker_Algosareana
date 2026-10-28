@@ -1,6 +1,8 @@
 #pragma once
 #include "index_map.h"
 #include <string>
+#include <string_view>
+#include <cstdint>
 #include <unordered_set>
 #include <vector>
 namespace samsearch {
