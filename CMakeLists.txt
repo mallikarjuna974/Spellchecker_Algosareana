@@ -19,3 +19,8 @@ else()
  target_compile_options(autocorrect PRIVATE -Wall -Wextra -Wpedantic)
  target_compile_options(multilingual_autocorrect PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+enable_testing()
+add_executable(unicode_test tests/unicode_test.cpp src/Unicode.cpp src/MultiDictionary.cpp)
+target_include_directories(unicode_test PRIVATE include)
+add_test(NAME unicode_test COMMAND unicode_test)
