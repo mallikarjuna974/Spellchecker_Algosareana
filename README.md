@@ -19,7 +19,7 @@ python scripts/fetch_dictionaries.py
 
 The script filters the Telugu, Tamil, and Hindi upstream lists by Unicode script and writes exactly 10,000 unique words into each data file. It fails instead of silently padding a short list. Internet access is needed for this one-time setup. Review the upstream license before redistributing dictionary data.
 
-Upstream: urlIndic Project dictionarieshttps://gitlab.com/indicproject/dictionaries (GPLv2).
+Upstream: https://gitlab.com/indicproject/dictionaries (GPLv2).
 
 ## Build
 ```bash
